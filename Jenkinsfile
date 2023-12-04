@@ -34,7 +34,26 @@ pipeline {
                 }
             }
         }
+        stage('Deploy to EKS') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AKIAXYX2M6GNUW5F7A5N', credentialsId: 'Vaishnavi_19', secretKeyVariable: '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']]) {
+                    withKubeConfig([credentialsId: 'kubeconfig']) {
+                        sh 'pwd'
+                        sh 'cp -R helm/* .'
+                        sh 'ls -ltrh'
+                        sh "pwd"
+
+                        script {
+                            sh "kubectl config use-context ${eksdemo}"
+                            sh "/usr/local/bin/helm upgrade --install petclinic-app petclinic --set image.repository=vaishnavijadhav1903/petclinic --set image.tag=${BUILD_NUMBER}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
         
 
-    } 
-}       
+    
+     
